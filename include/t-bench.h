@@ -1,0 +1,88 @@
+#ifndef T_BENCH_H
+#define T_BENCH_H
+
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <functional>
+
+namespace TBench {
+	class Benchmark;
+	class Suite;
+
+	/* Case */
+
+	class Case {
+	public:
+		virtual void Register() = 0;
+		void operator()();
+		virtual ~Case() {}
+	};
+
+	inline void Case::operator()() {
+		this->Register();
+	}
+
+	/* Benchmark */
+
+	class Benchmark {
+	public:
+		template <typename ... TCases>
+		Benchmark(TCases... cases) {
+			unpack(cases...);
+		}
+
+	private:
+		typedef std::vector<std::function<void()>> FuncVector;
+		friend class Suite;
+		FuncVector _funcs;
+
+		/* Unpacking functions */
+		template <typename TCase, typename ... TCases> void unpack(TCase first, TCases... cases);
+		template <typename TCase> void unpack(TCase single);
+		void unpack() {};
+
+		void run();
+	};
+
+	template <typename TCase, typename ... TCases>
+	void Benchmark::unpack(TCase first, TCases... cases) {
+		_funcs.push_back([=]{ first(); });
+		unpack(cases...);
+	}
+
+	template <typename TCase>
+	void Benchmark::unpack(TCase single) {
+		_funcs.push_back([=]{ single(); });
+	}
+
+	inline void Benchmark::run() {
+		for (auto f : _funcs) f();
+	}
+
+	/* Suite - Note: This is really not a "true" class. It's just a couple of subroutines, more or less. */
+	class Suite {
+	private:
+		typedef std::unordered_map<std::string, Benchmark> BenchmarkHash;
+		static BenchmarkHash _benches;
+
+	public:
+		template <typename ... TCases>
+		static void AddBenchmark(const std::string& name, TCases... cases);
+		static void Run(const std::string& name);
+	};
+
+	Suite::BenchmarkHash Suite::_benches;
+
+	template <typename ... TCases>
+	void Suite::AddBenchmark(const std::string& name, TCases... cases) {
+		_benches.insert(std::make_pair(name, Benchmark(cases...)));
+	}
+
+	inline void Suite::Run(std::string const& name) {
+		auto bench = _benches.at(name);
+		bench.run();
+	}
+}
+
+#endif
