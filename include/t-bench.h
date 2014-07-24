@@ -5,12 +5,15 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include <initializer_list>
 #include <chrono>
 #include <iostream>
 
 namespace TBench {
 	class Benchmark;
 	class Suite;
+
+	typedef std::vector<std::string> Benchmarks;
 
 	/* Timer */
 
@@ -128,6 +131,7 @@ namespace TBench {
 		template <typename ... TCases>
 		static void AddBenchmark(const std::string& name, Benchmark::TimerStrategy strategy, TCases... cases);
 		static void Run(const std::string& name);
+		static void Run(const Benchmarks& names);
 	};
 
 	Suite::BenchmarkHash Suite::_benches;
@@ -140,6 +144,10 @@ namespace TBench {
 	inline void Suite::Run(std::string const& name) {
 		auto bench = _benches.at(name);
 		bench.run();
+	}
+
+	inline void Suite::Run(Benchmarks const& names) {
+		for (auto name : names) Run(name);
 	}
 
 	/* Output calculation functions */
