@@ -84,7 +84,23 @@ namespace TBench {
 		for (auto f : _funcs) f();
 	}
 
+	/* Exceptions */
+
+	class BenchmarkException : public std::exception {
+	private:
+		const std::string _what;
+
+	public:
+		explicit BenchmarkException(std::string const& cs)
+			: _what(cs) {}
+
+		char const* what() const override {
+			return this->_what.c_str();
+		}
+	};
+
 	/* Suite - Note: This is really not a "true" class. It's just a couple of subroutines, more or less. */
+
 	class Suite {
 	private:
 		typedef std::unordered_map<std::string, Benchmark> BenchmarkHash;
