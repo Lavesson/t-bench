@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 #include <chrono>
+#include <iostream>
 
 namespace TBench {
 	class Benchmark;
@@ -51,12 +52,12 @@ namespace TBench {
 
 	class Benchmark {
 	public:
+		typedef std::function<Timer::Time(std::vector<Timer::Time>)> TimerStrategy;
 		template <typename ... TCases>
-		Benchmark(TCases... cases) {
-			unpack(cases...);
-		}
+		Benchmark(TimerStrategy strategy, TCases... cases);
 
 	private:
+		TimerStrategy _strategy;
 		typedef std::vector<std::function<void()>> FuncVector;
 		friend class Suite;
 		FuncVector _funcs;
@@ -68,6 +69,12 @@ namespace TBench {
 
 		void run();
 	};
+
+	template <typename ... TCases>
+	Benchmark::Benchmark(TimerStrategy strategy, TCases... cases)
+		: _strategy(strategy) {
+		unpack(cases...);
+	}
 
 	template <typename TCase, typename ... TCases>
 	void Benchmark::unpack(TCase first, TCases... cases) {
@@ -81,7 +88,18 @@ namespace TBench {
 	}
 
 	inline void Benchmark::run() {
-		for (auto f : _funcs) f();
+		std::vector<Timer::Time> times;
+
+		for (auto f : _funcs) {
+			Timer timer;
+			timer.start(); 
+			f();
+			timer.stop();
+			times.push_back(timer.durationInMilliseconds());
+		}
+
+		// TODO: We need nicer output than this:
+		std::cout << this->_strategy(times) << " ms" << std::endl;
 	}
 
 	/* Exceptions */
@@ -107,17 +125,16 @@ namespace TBench {
 		static BenchmarkHash _benches;
 
 	public:
-		typedef std::function<Timer::Time(std::vector<Timer::Time>)> TimerStrategy;
 		template <typename ... TCases>
-		static void AddBenchmark(const std::string& name, TimerStrategy strategy, TCases... cases);
+		static void AddBenchmark(const std::string& name, Benchmark::TimerStrategy strategy, TCases... cases);
 		static void Run(const std::string& name);
 	};
 
 	Suite::BenchmarkHash Suite::_benches;
 
 	template <typename ... TCases>
-	void Suite::AddBenchmark(const std::string& name, TimerStrategy strategy, TCases... cases) {
-		_benches.insert(std::make_pair(name, Benchmark(cases...)));
+	void Suite::AddBenchmark(const std::string& name, Benchmark::TimerStrategy strategy, TCases... cases) {
+		_benches.insert(std::make_pair(name, Benchmark(strategy, cases...)));
 	}
 
 	inline void Suite::Run(std::string const& name) {
@@ -131,12 +148,13 @@ namespace TBench {
 		if (times.size() != 2)
 			throw BenchmarkException("TimeDiff expects two cases");
 
-		return 0;
-		//Timer::Time diff;
+		return times[1] - times[0];
 	}
 
 	inline Timer::Time TotalTime(std::vector<Timer::Time> times) {
-		return 0;
+		Timer::Time total = 0;
+		for (auto t : times) total += t;
+		return total;
 	}
 }
 
