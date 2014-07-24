@@ -47,13 +47,13 @@ namespace TBench {
 
 	template <typename TCase, typename ... TCases>
 	void Benchmark::unpack(TCase first, TCases... cases) {
-		_funcs.push_back([=]{ first(); });
+		_funcs.push_back([=]() mutable { first(); });
 		unpack(cases...);
 	}
 
 	template <typename TCase>
 	void Benchmark::unpack(TCase single) {
-		_funcs.push_back([=]{ single(); });
+		_funcs.push_back([=]() mutable { single(); });
 	}
 
 	inline void Benchmark::run() {
