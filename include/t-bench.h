@@ -124,6 +124,20 @@ namespace TBench {
 		auto bench = _benches.at(name);
 		bench.run();
 	}
+
+	/* Output calculation functions */
+
+	inline Timer::Time TimeDiff(std::vector<Timer::Time> times) {
+		if (times.size() != 2)
+			throw BenchmarkException("TimeDiff expects two cases");
+
+		return 0;
+		//Timer::Time diff;
+	}
+
+	inline Timer::Time TotalTime(std::vector<Timer::Time> times) {
+		return 0;
+	}
 }
 
 #endif
