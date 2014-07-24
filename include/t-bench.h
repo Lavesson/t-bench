@@ -107,15 +107,16 @@ namespace TBench {
 		static BenchmarkHash _benches;
 
 	public:
+		typedef std::function<Timer::Time(std::vector<Timer::Time>)> TimerStrategy;
 		template <typename ... TCases>
-		static void AddBenchmark(const std::string& name, TCases... cases);
+		static void AddBenchmark(const std::string& name, TimerStrategy strategy, TCases... cases);
 		static void Run(const std::string& name);
 	};
 
 	Suite::BenchmarkHash Suite::_benches;
 
 	template <typename ... TCases>
-	void Suite::AddBenchmark(const std::string& name, TCases... cases) {
+	void Suite::AddBenchmark(const std::string& name, TimerStrategy strategy, TCases... cases) {
 		_benches.insert(std::make_pair(name, Benchmark(cases...)));
 	}
 
