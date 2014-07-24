@@ -5,10 +5,34 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include <chrono>
 
 namespace TBench {
 	class Benchmark;
 	class Suite;
+
+	/* Timer */
+
+	class Timer {
+	private:
+		std::chrono::system_clock::time_point _start, _end;
+
+	public:
+		typedef long long Time; // ago?
+
+		void start() {
+			_start = std::chrono::high_resolution_clock::now();
+		}
+
+		void stop() {
+			_end = std::chrono::high_resolution_clock::now();
+		}
+
+		Time durationInMilliseconds() const {
+			auto time = std::chrono::duration_cast<std::chrono::milliseconds>(_end - _start).count();
+			return time;
+		}
+	};
 
 	/* Case */
 
