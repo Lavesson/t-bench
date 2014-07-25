@@ -24,14 +24,13 @@ The simplest way to use `t-bench` is by passing lambdas as test cases:
 	using TBench::Benchmarks;
 
 	int main() {
-		// Call Suite::AddBenchmark to create a benchmark 
-		// The first param is the name, the second is a 
-		// function to use when producing output. The rest of the 
-		// params are test cases:
+		// Call Suite::AddBenchmark to create a benchmark. The first param 
+		// is the name, the second is a function to use when producing 
+		// output. The rest of the params are test cases:
 		Suite::AddBenchmark("My first benchmark", TBench::TotalTime, 
 			[]{ std::this_thread::sleep_for(std::chrono::seconds(2)); },
 			[]{ std::this_thread::sleep_for(std::chrono::seconds(3)); }
-	);
+		);
 
 		// Will output 5000 ms as total time:
 		Suite::Run("My first benchmark");
@@ -61,7 +60,7 @@ by overriding the pure virtual function `registerCase`:
 		const int _n;
 
 		void registerCase() override {
-			auto ten = fib(_n);
+			fib(_n);
 		}
 
 		int fib(int n) {
