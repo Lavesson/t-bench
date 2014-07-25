@@ -128,7 +128,7 @@ namespace TBench {
 	class Suite {
 	private:
 		typedef std::unordered_map<std::string, Benchmark> BenchmarkHash;
-		static BenchmarkHash _benches;
+		static BenchmarkHash& benches();
 
 	public:
 		template <typename ... TCases>
@@ -138,14 +138,18 @@ namespace TBench {
 		static void RunAll();
 	};
 
-	Suite::BenchmarkHash Suite::_benches;
-
 	template <typename ... TCases>
 	void Suite::AddBenchmark(const std::string& name, Benchmark::TimerStrategy strategy, TCases... cases) {
-		_benches.insert(std::make_pair(name, Benchmark(strategy, cases...)));
+		benches().insert(std::make_pair(name, Benchmark(strategy, cases...)));
+	}
+
+	inline Suite::BenchmarkHash& Suite::benches() {
+		static BenchmarkHash benches;
+		return benches;
 	}
 
 	inline void Suite::Run(std::string const& name) {
+		auto _benches = benches();
 		if (_benches.find(name) != _benches.end()) {
 			std::cout << "-- Running benchmark: " << name << std::endl;
 			auto bench = _benches.at(name);
@@ -161,6 +165,7 @@ namespace TBench {
 
 	inline void Suite::RunAll() {
 		Benchmarks all;
+		auto _benches = benches();
 		for (auto benchmark : _benches) all.push_back(benchmark.first);
 		Run(all);
 	}
