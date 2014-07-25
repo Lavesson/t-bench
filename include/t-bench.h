@@ -135,6 +135,7 @@ namespace TBench {
 		static void AddBenchmark(const std::string& name, Benchmark::TimerStrategy strategy, TCases... cases);
 		static void Run(const std::string& name);
 		static void Run(const Benchmarks& names);
+		static void RunAll();
 	};
 
 	Suite::BenchmarkHash Suite::_benches;
@@ -152,6 +153,12 @@ namespace TBench {
 
 	inline void Suite::Run(Benchmarks const& names) {
 		for (auto name : names) Run(name);
+	}
+
+	inline void Suite::RunAll() {
+		Benchmarks all;
+		for (auto benchmark : _benches) all.push_back(benchmark.first);
+		Run(all);
 	}
 
 	/* Output calculation functions */
