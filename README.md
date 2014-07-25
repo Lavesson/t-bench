@@ -18,8 +18,9 @@ The simplest way to use `t-bench` is by passing lambdas as test cases:
 
 	int main() {
 		// Call Suite::AddBenchmark to create a benchmark 
-		// The first param is the name, the second is a function to use when producing output. The rest of the params are
-	// test cases:
+		// The first param is the name, the second is a 
+		// function to use when producing output. The rest of the 
+		// params are test cases:
 		Suite::AddBenchmark("My first benchmark", TBench::TotalTime, 
 			[]{ std::this_thread::sleep_for(std::chrono::seconds(2)); },
 			[]{ std::this_thread::sleep_for(std::chrono::seconds(3)); }
