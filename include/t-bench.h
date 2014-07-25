@@ -42,13 +42,13 @@ namespace TBench {
 
 	class Case {
 	public:
-		virtual void Register() = 0;
+		virtual void registerCase() = 0;
 		void operator()();
 		virtual ~Case() {}
 	};
 
 	inline void Case::operator()() {
-		this->Register();
+		this->registerCase();
 	}
 
 	/* Benchmark */
