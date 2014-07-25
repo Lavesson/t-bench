@@ -92,17 +92,20 @@ namespace TBench {
 
 	inline void Benchmark::run() {
 		std::vector<Timer::Time> times;
+		int n = 0;
 
 		for (auto f : _funcs) {
+			std::cout << "   Case " << n++ << ": ";
 			Timer timer;
 			timer.start(); 
 			f();
 			timer.stop();
 			times.push_back(timer.durationInMilliseconds());
+			std::cout << timer.durationInMilliseconds() << std::endl;
 		}
 
 		// TODO: We need nicer output than this:
-		std::cout << this->_strategy(times) << " ms" << std::endl;
+		std::cout << "   Time: " << this->_strategy(times) << " ms" << std::endl;
 	}
 
 	/* Exceptions */
@@ -142,6 +145,7 @@ namespace TBench {
 	}
 
 	inline void Suite::Run(std::string const& name) {
+		std::cout << "-- Running benchmark: " << name << std::endl;
 		auto bench = _benches.at(name);
 		bench.run();
 	}
