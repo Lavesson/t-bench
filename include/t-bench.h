@@ -146,9 +146,13 @@ namespace TBench {
 	}
 
 	inline void Suite::Run(std::string const& name) {
-		std::cout << "-- Running benchmark: " << name << std::endl;
-		auto bench = _benches.at(name);
-		bench.run();
+		if (_benches.find(name) != _benches.end()) {
+			std::cout << "-- Running benchmark: " << name << std::endl;
+			auto bench = _benches.at(name);
+			bench.run();
+		} else {
+			std::cout << "-- Benchmark '" << name << "' not found. Skipping." << std::endl;
+		}
 	}
 
 	inline void Suite::Run(Benchmarks const& names) {
