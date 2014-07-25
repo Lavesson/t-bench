@@ -1,6 +1,7 @@
 This is the home of `t-bench`, a benchmarking utility for C++ programs.
 
-The name is simply on the same form as my former library `t-unit` (initially `tap-unit`) and I wrote it because I needed a simple way to benchmark different scenarios in a 3D engine.
+The name is simply on the same form as my former library `t-unit` (initially `tap-unit`) and 
+I wrote it because I needed a simple way to benchmark different scenarios in a 3D engine.
 
 ### Feature overview
 
@@ -41,11 +42,13 @@ Sample output from this code:
 
 #### MSVC++
 
-`t-bench` makes use of a lot of C++11 features. Most notably lambdas, variadic templates and initializer lists. You can compile it using VS2013 (The nov. CTP of 2012 might work. I haven't tried). 
+`t-bench` makes use of a lot of C++11 features. Most notably lambdas, variadic templates and initializer lists. 
+You can compile it using VS2013 (The nov. CTP of 2012 might work. I haven't tried). 
 
 #### Other compilers and operating systems
 
-I haven't gotten around to trying to compile using GCC or other compilers and/or OS:es. It might compile, and if it doesn't, it's probably going to be minor fixes.
+I haven't gotten around to trying to compile using GCC or other compilers and/or OS:es. It might compile, and if 
+it doesn't, it's probably going to be minor fixes.
 
 ### Contributing
 
